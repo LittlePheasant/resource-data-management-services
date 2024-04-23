@@ -1,7 +1,7 @@
 <?php
     header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-    header("Access-Control-Allow-Methods: GET");
+    header("Access-Control-Allow-Methods: GET, POST");
     header("Access-Control-Allow-Credentials: true");
     header("Content-Type: application/json");
 
@@ -12,11 +12,11 @@
         die();
     }
 
-    if ($method !== 'GET') :
+    if ($method !== 'GET' || $method !== 'POST') :
         http_response_code(405);
         echo json_encode([
             'success' => 0,
-            'message' => 'Bad Request!. Only GET method is allowed',
+            'message' => 'Bad Request!. Method is not allowed',
         ]);
         exit;
     endif;
@@ -27,33 +27,43 @@
     $conn = $database->dbConnection();
 
     try {
-        
-        $sql = "SELECT * FROM `employees_tbl`";
-        $stmt = $conn->prepare($sql);
+
+        if(isset($_GET)){
+
+            $sql = "SELECT * FROM `employees_tbl`";
+            $stmt = $conn->prepare($sql);
 
 
-        if ($stmt->execute()) {
-            
-            $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            http_response_code(200);
-            echo json_encode([
-                'success' => true,
-                'data' => $row,
-                'message' => 'Successfully loaded data!'
-            ]);
+            if ($stmt->execute()) {
+                
+                $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                http_response_code(200);
+                echo json_encode([
+                    'success' => true,
+                    'data' => $row,
+                    'message' => 'Successfully loaded data!'
+                ]);
 
 
 
-        } else {
-            // No data found
-            http_response_code(404);
-            echo json_encode([
-                'success' => false,
-                'message' => 'No data',
-            ]);
+            } else {
+                // No data found
+                http_response_code(404);
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'No data',
+                ]);
 
-            exit;
+                exit;
+            }
+
+        } elseif(isset($_POST)){
+            // code for post
+        } else{
+            // 
         }
+        
+        
 
     } catch (PDOException $e) {
         http_response_code(400);

@@ -65,8 +65,11 @@
                 </h1>
             </div>
             <div class="card-body">
-                <table class="table table-hover table-responsive table-primary overflow-auto" id="editableTable">
-                  <!-- <button onload="onload()">Button</button> -->
+              <!-- Button trigger modal -->
+              <button type="button" class="btn btn-primary mb-1" data-bs-toggle="modal" data-bs-target="#addEmployee">Toggle button</button>
+
+              <div class="table-container overflow-auto">
+                <table class="table table-hover table-responsive table-primary" id="editableTable">
                     <thead>
                         <tr>
                           <th>#</th>
@@ -83,8 +86,80 @@
                     <tbody class="table-group-divider">
                     </tbody>
                 </table>
+              </div>
             </div>
         </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="addEmployee" tabindex="-1" aria-labelledby="addEmployeeLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="addEmployeeLabel">Add Employee</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="employeeform" action="" method="post">
+
+              <!-- Form fields -->
+              <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">@</span>
+                <input type="text" class="form-control" placeholder="Employee ID" aria-label="Employee ID" aria-describedby="basic-addon1" id="emp_id">
+              </div>
+
+              <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Firstname" aria-label="Firstname" id="emp_name">
+                <span class="input-group-text"></span>
+                <input type="text" class="form-control" placeholder="Lastname" aria-label="Lastname" id="emp_lastname">
+              </div>
+
+              <div class="input-group date mb-3">
+                <span class="input-group-text glyphicon glyphicon-th">Date Hired</span>
+                <input type="date" class="form-control" placeholder="Date Hired" id="date_hired" aria-label="Date Hired">
+              </div>
+
+              <div class="input-group mb-3">
+                <select class="form-select" id="department" placeholder="Department" name="department" aria-label="Department" id="department">
+                  <option value="">Select Department</option>
+                  <option value="admin">Admin</option>
+                  <option value="qc">QC</option>
+                </select>
+                <span class="input-group-text"></span>
+                <input type="text" class="form-control" id="position" placeholder="Position" name="position" aria-label="Position">
+              </div>
+
+              <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Email" aria-label="Email" id="emp_email" name="emp_email" aria-describedby="basic-addon2">
+                <span class="input-group-text" id="basic-addon2">@taccteam.com</span>
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text"></span>
+                <input type="text" class="form-control" placeholder="Password" aria-label="Password" id="emp_password" name="emp_password">
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text"></span>
+                <select class="form-select" id="user_role" name="user_role" aria-label="Role">
+                  <option value="">Select Role</option>
+                  <option value="superadmin">Super Admin</option>
+                  <option value="manager">Manager</option>
+                  <option value="user">User</option>
+                </select>
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+              </div>
+
+            </form>
+          </div>
+          
+        </div>
+      </div>
     </div>
 
     <script>
@@ -95,6 +170,46 @@
         //         console.log('Cell edited: ' + this.textContent);
         //     });
         // });
+        document.getElementById('employeeform').addEventListener('submit', function(event) {
+          event.preventDefault(); // Prevent form submission for now
+
+          // Gather form data
+          const formData = new FormData(this);
+
+          fetch('../services/users.php', {
+              method: 'POST',
+              body: formData // Include form data in the request body
+          })
+          .then(response => {
+            if (response.ok) {
+                // Parse the response body as JSON
+                return response.json();
+            } else {
+                // Handle HTTP error
+                alert('Unable to add. Please try again.');
+                console.error('HTTP error:', response.status);
+                throw new Error('HTTP error ' + response.status);
+            }
+          })
+          .then(data => {
+            // Check if the operation was successful
+            if (data.success) {
+                alert(data.message); // Show success message
+                window.location.href = './users.html';
+            } else {
+                // Show error message
+                alert(data.message);
+                console.error('Failed:', data.message);
+            }
+          })
+          .catch(error => {
+            // Handle network error or JSON parsing error
+            alert('An error occurred. Please try again later.');
+            console.error('Error:', error);
+          });
+
+
+        });
 
         window.onload = function() {
           fetch('../services/users.php', {
