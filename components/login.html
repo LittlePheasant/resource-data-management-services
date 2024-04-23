@@ -99,8 +99,19 @@
                 // Check if the login was successful
                 if (data.success) {
                     alert(data.message); // Show success message
+
+                    // Define the data you want to store
+                    const user = {
+                      name:data.name,
+                      id:data.id
+                    };
+
                     // Redirect to the home page after successful login
                     window.location.href = './index.html';
+
+                    //  directly store individual values without converting to JSON
+                    localStorage.setItem('username', user.name);
+                    localStorage.setItem('id', user.id);
                 } else {
                     // Show error message
                     alert(data.message);

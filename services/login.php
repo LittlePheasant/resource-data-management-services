@@ -63,6 +63,8 @@
                         http_response_code(200);
                         echo json_encode([
                             'success' => true,
+                            'id' => $row['_id'],
+                            'name' => $row['emp_name'],
                             'message' => 'User is already logged in!'
                         ]);
                         exit;
@@ -79,6 +81,8 @@
                             http_response_code(200);
                             echo json_encode([
                                 'success' => true,
+                                'id' => $row['_id'],
+                                'name' => $row['emp_name'],
                                 'message' => 'Login Successfully!'
                             ]);
                         } else {
