@@ -51,6 +51,58 @@
           </div>
         </div>
     </nav>
+
+    <script>
+      document.getElementById('logoutBtn').addEventListener('click', function() {
+
+        // Get data
+        const credentials = {
+          username : localStorage.getItem('username'),
+          id : localStorage.getItem('id') 
+        }
+        
+        const userData = JSON.stringify(credentials);
+
+        fetch('../services/logout.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: userData // Include data in the request body
+        })
+        .then(response => {
+          if (response.ok) {
+              // Parse the response body as JSON
+              return response.json();
+          } else {
+              // Handle HTTP error
+              alert('Logout failed. Please try again.');
+              console.error('HTTP error:', response.status);
+              throw new Error('HTTP error ' + response.status);
+          }
+        })
+        .then(data => {
+          // Check if the logout was successful
+          if (data.success) {
+            alert(data.message); // Show success message
+            
+            localStorage.removeItem('username');
+            localStorage.removeItem('id');
+            
+            // Redirect to the login page after successful logout
+            window.location.href = './login.html';
+
+          } else {
+            // Show error message
+            alert(data.message);
+            console.error('Login failed:', data.message);
+          }
+        })
+        .catch(error => {
+            console.error('Error during logout:', error);
+        });
+      });
+    </script>
     
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>

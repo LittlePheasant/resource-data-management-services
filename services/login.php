@@ -53,7 +53,7 @@
 
                 if(password_verify($password, $row['emp_password'])){
 
-                    $sql = "SELECT log_status FROM `logs_tbl` WHERE qc_id = :qc_id AND log_out IS NULL";
+                    $sql = "SELECT log_status FROM `logs_tbl` WHERE qc_id = :qc_id AND date = CURDATE() AND log_out IS NULL";
                     $stmt = $conn->prepare($sql);
                     $stmt->bindParam(':qc_id', $qc_id);
                     $stmt->execute();
@@ -71,8 +71,8 @@
 
                     } else {
 
-                        $sql = "INSERT INTO `logs_tbl` (qc_id, log_in) 
-                                VALUES (:qc_id, NOW())";
+                        $sql = "INSERT INTO `logs_tbl` (qc_id, date, log_in) 
+                                VALUES (:qc_id, CURDATE(), NOW())";
                         $stmt = $conn->prepare($sql);
                         $stmt->bindParam(':qc_id', $qc_id);
                         

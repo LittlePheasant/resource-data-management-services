@@ -68,6 +68,9 @@
                     <li><a class="dropdown-item" href="#">Something else here</a></li>
                   </ul>
                 </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="logoutBtn">Logout</a>
+                </li> 
               </ul>
               <form class="d-flex mt-3" role="search">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
@@ -174,6 +177,55 @@
         //     var row = button.parentNode.parentNode;
         //     row.parentNode.removeChild(row);
         // }
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+
+          // Get data
+          const credentials = {
+            username : localStorage.getItem('username'),
+            id : localStorage.getItem('id') 
+          }
+
+          const userData = JSON.stringify(credentials);
+
+          fetch('../services/logout.php', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: userData // Include data in the request body
+          })
+          .then(response => {
+            if (response.ok) {
+                // Parse the response body as JSON
+                return response.json();
+            } else {
+                // Handle HTTP error
+                alert('Logout failed. Please try again.');
+                console.error('HTTP error:', response.status);
+                throw new Error('HTTP error ' + response.status);
+            }
+          })
+          .then(data => {
+            // Check if the logout was successful
+            if (data.success) {
+              alert(data.message); // Show success message
+              
+              localStorage.removeItem('username');
+              localStorage.removeItem('id');
+              
+              // Redirect to the login page after successful logout
+              window.location.href = './login.html';
+
+            } else {
+              // Show error message
+              alert(data.message);
+              console.error('Login failed:', data.message);
+            }
+          })
+          .catch(error => {
+              console.error('Error during logout:', error);
+          });
+        });
     </script>
 
 
