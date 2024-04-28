@@ -49,13 +49,13 @@
             if ($stmt->rowCount() > 0) {
 
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                $qc_id = $row['qc_id'];
+                $emp_id = $row['_id'];
 
                 if(password_verify($password, $row['emp_password'])){
 
-                    $sql = "SELECT log_status FROM `logs_tbl` WHERE qc_id = :qc_id AND date = CURDATE() AND log_out IS NULL";
+                    $sql = "SELECT log_status FROM `logs_tbl` WHERE emp_id = :emp_id AND date = CURDATE() AND log_out IS NULL";
                     $stmt = $conn->prepare($sql);
-                    $stmt->bindParam(':qc_id', $qc_id);
+                    $stmt->bindParam(':emp_id', $emp_id);
                     $stmt->execute();
 
                     if ($stmt->rowCount() > 0) {
@@ -71,10 +71,10 @@
 
                     } else {
 
-                        $sql = "INSERT INTO `logs_tbl` (qc_id, date, log_in) 
-                                VALUES (:qc_id, CURDATE(), NOW())";
+                        $sql = "INSERT INTO `logs_tbl` (emp_id, date, log_in) 
+                                VALUES (:emp_id, CURDATE(), NOW())";
                         $stmt = $conn->prepare($sql);
-                        $stmt->bindParam(':qc_id', $qc_id);
+                        $stmt->bindParam(':emp_id', $emp_id);
                         
                         if($stmt->execute()){
 
@@ -103,8 +103,6 @@
                     echo json_encode([
                         'success' => false,
                         'message' => 'Invalid credentials!',
-                        'pass'=> $password,
-                        'hash' => $row['emp_password']
                     ]);
                     exit;
 
